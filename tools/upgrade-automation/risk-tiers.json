@@ -1,0 +1,11 @@
+{
+  "alwaysTier1": [
+    "react", "react-dom", "typescript", "jest",
+    "vite", "eslint", "webpack", "next"
+  ],
+  "minimumTier2Prefixes": ["@thoughtspot/"],
+  "tier3Requirements": {
+    "updateTypes": ["patch", "pin", "digest"],
+    "maxAffectedTargets": 25
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "description": "Stage 2 verification steps. ${filter} is a set of pnpm --filter args computed by verify-upgrade.sh: it selects the workspace packages whose package.json changed in the PR PLUS everything that depends on them, so steps never build the whole monorepo. verify-upgrade.sh picks packageOverrides[<dep>] if present, else defaults.",
+
+  "defaults": {
+    "baseBranch": "app_ib_dev",
+    "verificationSteps": [
+      { "name": "build", "cmd": "pnpm -r ${filter} build" },
+      { "name": "lint",  "cmd": "pnpm -r ${filter} lint" },
+      { "name": "test",  "cmd": "pnpm -r ${filter} test" }
+    ]
+  },
+
+  "packageOverrides": {
+    "react": {
+      "description": "React touches rendering; run the usual steps plus an integration smoke test.",
+      "verificationSteps": [
+        { "name": "build", "cmd": "pnpm -r ${filter} build" },
+        { "name": "test",  "cmd": "pnpm -r ${filter} test" },
+        { "name": "smoke", "cmd": "pnpm -r ${filter} test:integration" }
+      ]
+    },
+    "jest": {
+      "description": "Jest upgrades most often break mocks/timers; run tests first for fast feedback, then build.",
+      "verificationSteps": [
+        { "name": "test",  "cmd": "pnpm -r ${filter} test" },
+        { "name": "build", "cmd": "pnpm -r ${filter} build" }
+      ]
+    },
+    "typescript": {
+      "description": "TypeScript bumps surface as type errors; type-check first (cheapest signal) before test.",
+      "verificationSteps": [
+        { "name": "typecheck", "cmd": "pnpm -r ${filter} tsc" },
+        { "name": "build",     "cmd": "pnpm -r ${filter} build" },
+        { "name": "test",      "cmd": "pnpm -r ${filter} test" }
+      ]
+    }
+  }
+}
