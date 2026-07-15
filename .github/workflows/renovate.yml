@@ -1,0 +1,24 @@
+# Stage 1 (independent): Renovate runs on a schedule and opens upgrade PRs.
+# Needs a repo secret RENOVATE_TOKEN = a GitHub PAT (repo scope) that can open
+# PRs. (Alternatively install the hosted Mend Renovate GitHub App and delete
+# this workflow.)
+name: renovate
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"        # Mondays 05:00 UTC
+  workflow_dispatch: {}         # lets you run it manually from the Actions tab
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run Renovate
+        env:
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          LOG_LEVEL: info
+        run: npx --yes renovate@39 ${{ github.repository }}

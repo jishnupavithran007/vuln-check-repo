@@ -1,0 +1,94 @@
+# Stages 2 + 3 (independent): on every Renovate upgrade PR, verify the affected
+# packages; if verification fails, Claude heals the code and pushes the fix back
+# to the PR branch (which re-triggers this workflow to re-verify).
+#
+# Needs a repo secret ANTHROPIC_API_KEY (a valid Anthropic API key) for Stage 3.
+# Stage 2 needs no secret.
+name: verify-and-heal
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+# Allow the job to push the AI fix back to the PR branch and comment.
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  verify-and-heal:
+    # Only act on Renovate-style upgrade branches.
+    if: startsWith(github.head_ref, 'chore/upgrade-')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "8"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install workspace
+        run: pnpm install --no-frozen-lockfile
+
+      # ---- Stage 2: verify ----
+      - name: Verify (Stage 2)
+        id: verify
+        continue-on-error: true
+        run: pnpm -r test
+
+      - name: Verification passed
+        if: steps.verify.outcome == 'success'
+        run: echo "Stage 2 passed — no healing needed."
+
+      # ---- Stage 3: heal (only if verify failed) ----
+      - name: Heal with Claude (Stage 3)
+        id: heal
+        if: steps.verify.outcome == 'failure'
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          set -e
+          npm install -g @anthropic-ai/claude-code
+          DEP=$(echo "${{ github.head_ref }}" | sed -E 's#chore/upgrade-(.+)-to-.*#\1#')
+          bash tools/upgrade-automation/heal-upgrade.sh \
+            --workdir "$PWD" \
+            --verify-cmd "pnpm -r test" \
+            --dep "$DEP" \
+            --max-retries 3
+
+      - name: Push the AI fix
+        if: steps.verify.outcome == 'failure' && steps.heal.outcome == 'success'
+        run: |
+          if ! git diff --quiet; then
+            git config user.name  "upgrade-bot"
+            git config user.email "upgrade-bot@users.noreply.github.com"
+            git commit -am "fix(deps): AI heal for ${{ github.head_ref }} [skip-heal]"
+            git push origin HEAD:${{ github.head_ref }}
+            echo "Pushed AI fix; this re-triggers the workflow to re-verify."
+          fi
+
+      # ---- escalate if still broken ----
+      - name: Escalate (max retries reached)
+        if: steps.verify.outcome == 'failure' && steps.heal.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['needs-human-review']
+            });
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 'Stage 3 could not heal this upgrade after 3 attempts. Needs human review — see the AI_CHANGES.md journal in the run logs.'
+            });
+            core.setFailed('Healing failed after max retries.');
