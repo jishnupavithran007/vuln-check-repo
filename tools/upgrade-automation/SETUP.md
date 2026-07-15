@@ -42,10 +42,20 @@ label *is* the rank. (`score-risk-tier.mjs` is only for local dry-runs.)
 - **Or self-host** `renovate.yml`: add secret `RENOVATE_TOKEN` = a GitHub PAT
   with `repo` scope (fine-grained: Contents R/W, Pull requests R/W, Issues R/W).
 
-### 2. Stage 3 — the only secret you must add
-- Create an Anthropic API key at https://console.anthropic.com → API Keys.
-- Repo → **Settings → Secrets and variables → Actions → New repository secret**
-  - Name: `ANTHROPIC_API_KEY`   Value: your key
+### 2. Stage 3 — the Claude credential (add ONE as a repo secret)
+The workflow accepts either. Add it under
+**Settings → Secrets and variables → Actions → New repository secret**.
+
+- **Subscription (Claude Team/Pro/Max — no API billing):** run
+  `claude setup-token` in your terminal, authorize in the browser, copy the
+  `sk-ant-oat...` token. Secret name: `CLAUDE_CODE_OAUTH_TOKEN`.
+  (Check your org allows using the subscription in automation.)
+- **API key (needs an Anthropic Console org with billing):** console.anthropic.com
+  → API Keys → create. Secret name: `ANTHROPIC_API_KEY`.
+
+Note: a Claude Team *membership* is not the same as API access — the API
+Console is separate billing. If you can't create a key there, use the
+subscription token above or ask your Anthropic account admin.
 
 ### 3. Stage 5 — let tier-3 auto-merge
 - Repo → **Settings → General → Pull Requests → ✅ Allow auto-merge**

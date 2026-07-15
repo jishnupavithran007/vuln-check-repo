@@ -51,9 +51,17 @@ jobs:
         if: steps.verify.outcome == 'failure'
         continue-on-error: true
         env:
+          # Supply EITHER one (add whichever you have as a repo secret):
+          #  - CLAUDE_CODE_OAUTH_TOKEN: from `claude setup-token` (subscription)
+          #  - ANTHROPIC_API_KEY:       from the Anthropic Console (API billing)
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           set -e
+          # Drop whichever credential is empty so the claude CLI picks the right
+          # auth path (an empty-but-set key is treated as invalid).
+          [ -z "${CLAUDE_CODE_OAUTH_TOKEN:-}" ] && unset CLAUDE_CODE_OAUTH_TOKEN || true
+          [ -z "${ANTHROPIC_API_KEY:-}" ] && unset ANTHROPIC_API_KEY || true
           npm install -g @anthropic-ai/claude-code
           DEP=$(echo "${{ github.head_ref }}" | sed -E 's#chore/upgrade-(.+)-to-.*#\1#')
           bash tools/upgrade-automation/heal-upgrade.sh \
