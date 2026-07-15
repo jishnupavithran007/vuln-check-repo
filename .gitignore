@@ -1,0 +1,6 @@
+node_modules/
+dist/
+lib/
+.verify-logs/
+*.log
+AI_CHANGES.md

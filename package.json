@@ -1,0 +1,10 @@
+{
+  "name": "vuln-check-repo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sandbox monorepo mirroring the ThoughtSpot app layout (blink-v2 + MFEs under js/ts-apps, shared libs under js/ts-packages) with deliberately outdated dependencies, for testing the AI dependency-upgrade pipeline.",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test"
+  }
+}

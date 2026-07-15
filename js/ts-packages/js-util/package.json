@@ -1,0 +1,13 @@
+{
+  "name": "@sandbox/js-util",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.cjs",
+  "scripts": {
+    "build": "node -e \"require('./index.cjs')\"",
+    "test": "node test.cjs"
+  },
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}

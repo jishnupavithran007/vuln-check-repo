@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["npm"],
+  "separateMultipleMajor": true,
+  "prConcurrentLimit": 10,
+  "packageRules": [
+    {
+      "description": "Internal workspace packages are managed by pnpm, not Renovate",
+      "matchPackageNames": ["@sandbox/**"],
+      "enabled": false
+    },
+    {
+      "description": "Tier 3 - low risk: patch / pin / digest",
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "addLabels": ["upgrade:tier-3", "auto-merge"]
+    },
+    {
+      "description": "Tier 2 - medium: minor",
+      "matchUpdateTypes": ["minor"],
+      "addLabels": ["upgrade:tier-2"]
+    },
+    {
+      "description": "Tier 1 - high: major",
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["upgrade:tier-1", "major-upgrade", "needs-human-review"]
+    },
+    {
+      "description": "Critical frameworks/toolchain always Tier 1, any bump size",
+      "matchPackageNames": ["react", "react-dom", "typescript", "jest", "webpack", "vite", "next"],
+      "addLabels": ["upgrade:tier-1", "critical-pkg", "needs-human-review"]
+    }
+  ]
+}
