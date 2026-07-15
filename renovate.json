@@ -4,6 +4,11 @@
   "enabledManagers": ["npm"],
   "separateMultipleMajor": true,
   "prConcurrentLimit": 10,
+
+  "branchPrefix": "chore/upgrade-",
+  "branchNameStrict": true,
+  "branchTopic": "{{{depNameSanitized}}}-to-{{{newVersion}}}",
+  "commitMessageTopic": "{{depName}} to {{newVersion}}",
   "packageRules": [
     {
       "description": "Internal workspace packages are managed by pnpm, not Renovate",

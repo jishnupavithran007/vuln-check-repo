@@ -33,13 +33,19 @@ jobs:
           cache: pnpm
 
       - name: Install workspace
-        run: pnpm install --no-frozen-lockfile
+        run: |
+          # make the base branch available for the affected-graph diff
+          git fetch origin "${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}" || true
+          pnpm install --no-frozen-lockfile
 
-      # ---- Stage 2: verify ----
+      # ---- Stage 2: our affected-graph, config-driven verifier ----
       - name: Verify (Stage 2)
         id: verify
         continue-on-error: true
-        run: pnpm -r test
+        run: |
+          bash tools/upgrade-automation/verify-upgrade.sh \
+            --branch "${{ github.head_ref }}" \
+            --base "origin/${{ github.base_ref }}"
 
       - name: Verification passed
         if: steps.verify.outcome == 'success'
@@ -64,8 +70,11 @@ jobs:
           [ -z "${ANTHROPIC_API_KEY:-}" ] && unset ANTHROPIC_API_KEY || true
           npm install -g @anthropic-ai/claude-code
           DEP=$(echo "${{ github.head_ref }}" | sed -E 's#chore/upgrade-(.+)-to-.*#\1#')
+          # Stage 3 re-verifies with the SAME Stage 2 script (affected-scoped).
           bash tools/upgrade-automation/heal-upgrade.sh \
-            --workdir "$PWD" --verify-cmd "pnpm -r test" --dep "$DEP" --max-retries 3
+            --workdir "$PWD" \
+            --verify-cmd "bash tools/upgrade-automation/verify-upgrade.sh --branch ${{ github.head_ref }} --base origin/${{ github.base_ref }}" \
+            --dep "$DEP" --max-retries 3
 
       # ---- Stage 4: guardrails (only if heal succeeded) ----
       - name: Guardrails (Stage 4)
