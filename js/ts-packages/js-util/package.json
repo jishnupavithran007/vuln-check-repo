@@ -11,7 +11,7 @@
   "dependencies": {
     "lodash": "4.17.20",
     "ms": "2.1.2",
-    "strip-ansi": "6.0.1"
+    "strip-ansi": "7.2.0"
   },
   "devDependencies": {
     "@types/jest": "27.5.2",
