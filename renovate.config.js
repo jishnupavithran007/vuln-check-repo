@@ -32,10 +32,12 @@ const config = {
       enabled: false,
     },
     {
-      description: 'Tier 3 - low risk: patch/pin/digest (excludes critical frameworks)',
+      description: 'Tier 3 - low risk: patch/pin/digest (excludes critical frameworks). Auto-merges once CI is green (Stage 5).',
       matchUpdateTypes: ['patch', 'pin', 'digest'],
       matchPackageNames: ['*', '!react', '!react-dom', '!typescript', '!jest', '!webpack', '!vite', '!next'],
       addLabels: ['upgrade:tier-3', 'auto-merge'],
+      automerge: true,
+      platformAutomerge: true,
     },
     {
       description: 'Tier 2 - minor (excludes critical frameworks)',
