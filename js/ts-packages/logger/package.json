@@ -9,7 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "chalk": "4.1.2"
+    "chalk": "5.6.2"
   },
   "devDependencies": {
     "@types/jest": "27.5.2",
