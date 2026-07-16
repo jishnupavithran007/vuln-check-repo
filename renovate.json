@@ -8,7 +8,7 @@
   "branchPrefix": "chore/upgrade-",
   "branchNameStrict": true,
   "branchTopic": "{{{depNameSanitized}}}-to-{{{newVersion}}}",
-  "commitMessageTopic": "{{depName}} to {{newVersion}}",
+
   "packageRules": [
     {
       "description": "Internal workspace packages are managed by pnpm, not Renovate",
@@ -16,17 +16,19 @@
       "enabled": false
     },
     {
-      "description": "Tier 3 - low risk: patch / pin / digest",
+      "description": "Tier 3 - low risk: patch / pin / digest (excludes critical frameworks)",
       "matchUpdateTypes": ["patch", "pin", "digest"],
+      "matchPackageNames": ["*", "!react", "!react-dom", "!typescript", "!jest", "!webpack", "!vite", "!next"],
       "addLabels": ["upgrade:tier-3", "auto-merge"]
     },
     {
-      "description": "Tier 2 - medium: minor",
+      "description": "Tier 2 - medium: minor (excludes critical frameworks)",
       "matchUpdateTypes": ["minor"],
+      "matchPackageNames": ["*", "!react", "!react-dom", "!typescript", "!jest", "!webpack", "!vite", "!next"],
       "addLabels": ["upgrade:tier-2"]
     },
     {
-      "description": "Tier 1 - high: major",
+      "description": "Tier 1 - high: every major",
       "matchUpdateTypes": ["major"],
       "addLabels": ["upgrade:tier-1", "major-upgrade", "needs-human-review"]
     },
