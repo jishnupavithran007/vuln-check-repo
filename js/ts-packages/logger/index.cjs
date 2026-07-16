@@ -1,6 +1,7 @@
-// Uses chalk@4 (CommonJS). Upgrading to chalk@5 (ESM-only) breaks this
-// require() call — exactly the kind of breaking change Stage 3 repairs.
-const chalk = require('chalk');
+// chalk@5 is pure ESM. Node's require(esm) interop returns the module's
+// named exports plus the default export under `.default` — the chalk
+// instance (with .green etc.) is no longer the top-level require() result.
+const chalk = require('chalk').default;
 
 function info(msg) {
   return chalk.green('[info] ' + msg);
