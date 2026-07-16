@@ -1,0 +1,35 @@
+# General CI: runs on every pull request (and pushes to main). Fails the PR if
+# the TypeScript build, ESLint, or Jest tests don't pass. This is the gate for
+# ALL PRs — hand-written ones and Renovate's alike. (verify-and-heal.yml layers
+# AI healing on top for chore/upgrade-* PRs; this is the plain pass/fail check.)
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "8"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build (tsc, all packages)
+        run: pnpm -r build
+
+      - name: Lint (eslint)
+        run: pnpm run lint
+
+      - name: Test (jest, all packages)
+        run: pnpm -r test
