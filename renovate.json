@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "enabledManagers": ["npm"],
-  "separateMultipleMajor": true,
+  "separateMultipleMajor": false,
   "prConcurrentLimit": 20,
   "prHourlyLimit": 0,
 
