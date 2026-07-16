@@ -1,19 +1,21 @@
 {
-  "description": "Stage 2 verification steps (TypeScript + Jest). build compiles ALL packages in dependency order (tsc), which is needed so cross-package imports resolve; test runs Jest on only the affected packages (${filter} = changed package + its dependents). verify-upgrade.sh picks packageOverrides[<dep>] if present, else defaults.",
+  "description": "Stage 2 verification steps (TypeScript + Jest + ESLint). build compiles ALL packages in dependency order (tsc); lint runs ESLint over all TypeScript (every PR must be lint-clean — and the Stage 4 guardrail blocks eslint-disable, so lint errors must be genuinely fixed, not suppressed); test runs Jest on the affected packages (${filter} = changed package + its dependents).",
 
   "defaults": {
     "baseBranch": "main",
     "verificationSteps": [
       { "name": "build", "cmd": "pnpm -r build" },
+      { "name": "lint",  "cmd": "pnpm run lint" },
       { "name": "test",  "cmd": "pnpm -r ${filter} test" }
     ]
   },
 
   "packageOverrides": {
     "jest": {
-      "description": "Jest upgrades most often break tests; run tests first for fast feedback, then build.",
+      "description": "Jest upgrades most often break tests; run tests first for fast feedback, then lint and build.",
       "verificationSteps": [
         { "name": "test",  "cmd": "pnpm -r ${filter} test" },
+        { "name": "lint",  "cmd": "pnpm run lint" },
         { "name": "build", "cmd": "pnpm -r build" }
       ]
     }
