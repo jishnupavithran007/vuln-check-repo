@@ -12,6 +12,11 @@ const config = {
   extends: ['config:recommended'],
   onboarding: false,
   requireConfig: 'optional',
+  // Recreate upgrade PRs even if a previous one was closed. Without this,
+  // Renovate treats a closed PR as "don't want it" and silently drops the
+  // upgrade — which is why react/typescript/webpack/chalk went missing after
+  // our earlier config churn. For this sandbox we always want them back.
+  recreateWhen: 'always',
   enabledManagers: ['npm'],
   separateMultipleMajor: true,
   prConcurrentLimit: 20,
