@@ -20,5 +20,6 @@ jobs:
       - name: Run Renovate
         env:
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_CONFIG_FILE: renovate.config.js
           LOG_LEVEL: info
         run: npx --yes renovate@39 ${{ github.repository }}
