@@ -3,11 +3,13 @@
   "extends": ["config:recommended"],
   "enabledManagers": ["npm"],
   "separateMultipleMajor": true,
-  "prConcurrentLimit": 10,
+  "prConcurrentLimit": 20,
+  "prHourlyLimit": 0,
 
   "branchPrefix": "chore/upgrade-",
   "branchNameStrict": true,
   "branchTopic": "{{{depNameSanitized}}}-to-{{{newVersion}}}",
+  "commitMessageExtra": "from {{currentValue}} to {{newValue}}",
 
   "packageRules": [
     {
