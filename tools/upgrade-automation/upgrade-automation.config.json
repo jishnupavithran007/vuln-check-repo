@@ -1,10 +1,10 @@
 {
-  "description": "Stage 2 verification steps for the sandbox. ${filter} is a set of pnpm --filter args computed by verify-upgrade.sh to select only the affected workspace packages (changed package + its dependents). The sandbox packages define only build + test scripts, so those are the steps. verify-upgrade.sh picks packageOverrides[<dep>] if present, else defaults.",
+  "description": "Stage 2 verification steps (TypeScript + Jest). build compiles ALL packages in dependency order (tsc), which is needed so cross-package imports resolve; test runs Jest on only the affected packages (${filter} = changed package + its dependents). verify-upgrade.sh picks packageOverrides[<dep>] if present, else defaults.",
 
   "defaults": {
     "baseBranch": "main",
     "verificationSteps": [
-      { "name": "build", "cmd": "pnpm -r ${filter} build" },
+      { "name": "build", "cmd": "pnpm -r build" },
       { "name": "test",  "cmd": "pnpm -r ${filter} test" }
     ]
   },
@@ -14,7 +14,7 @@
       "description": "Jest upgrades most often break tests; run tests first for fast feedback, then build.",
       "verificationSteps": [
         { "name": "test",  "cmd": "pnpm -r ${filter} test" },
-        { "name": "build", "cmd": "pnpm -r ${filter} build" }
+        { "name": "build", "cmd": "pnpm -r build" }
       ]
     }
   }
