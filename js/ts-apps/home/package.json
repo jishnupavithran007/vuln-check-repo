@@ -12,7 +12,7 @@
     "@sandbox/js-util": "workspace:*",
     "@sandbox/logger": "workspace:*",
     "is-odd": "2.0.0",
-    "node-fetch": "2.7.0",
+    "node-fetch": "3.3.2",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
