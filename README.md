@@ -1,4 +1,4 @@
-# vuln-check-repo — upgrade pipeline sandbox
+# vuln-check-repo 
 
 A small monorepo that mirrors the ThoughtSpot app layout, on purpose:
 
