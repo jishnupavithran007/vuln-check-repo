@@ -5,9 +5,20 @@ import stripAnsi from 'strip-ansi';
 import ms from 'ms';
 
 export function titleCase(s: string): string {
-  return _.startCase(_.toLower(stripAnsi(s)));
+  return _.startCase(stripAnsi(s).toLowerCase());
 }
 
 export function humanize(millis: number): string {
   return ms(millis);
+}
+
+// lodash 4 REMOVED `_.pluck` (use `_.map`) and `_.contains` (use `_.includes`).
+// Pinned to lodash 3 here, so the 3 -> 4 major upgrade breaks these two
+// functions with "TypeError: _.pluck is not a function" until they're migrated.
+export function pluckNames(items: Array<{ name: string }>): string[] {
+  return _.pluck(items, 'name');
+}
+
+export function hasValue<T>(list: T[], value: T): boolean {
+  return _.contains(list, value);
 }
