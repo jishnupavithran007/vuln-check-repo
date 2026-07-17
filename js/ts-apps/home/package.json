@@ -13,8 +13,8 @@
     "@sandbox/logger": "workspace:*",
     "is-odd": "2.0.0",
     "node-fetch": "2.7.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@types/jest": "27.5.2",
