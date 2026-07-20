@@ -6,7 +6,6 @@ export function boot(): string {
   return info('blink-v2 booting: ' + greet('user', 7));
 }
 
-// lodash 4 REMOVED `_.pluck` — the 3 -> 4 major upgrade breaks this.
 export function moduleIds(mods: Array<{ id: string }>): string[] {
-  return _.pluck(mods, 'id');
+  return _.map(mods, 'id');
 }
