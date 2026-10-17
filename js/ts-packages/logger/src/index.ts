@@ -1,6 +1,8 @@
-// chalk is CJS in v4 but ESM-only in v5 — a major upgrade breaks the build/tests.
-import chalk from 'chalk';
+// chalk 5 is ESM-only, which ts-jest (CommonJS) cannot statically import,
+// so color codes are applied directly instead of depending on chalk at runtime.
+const ANSI_GREEN = '\x1b[32m';
+const ANSI_RESET = '\x1b[39m';
 
 export function info(msg: string): string {
-  return chalk.green('[info] ' + msg);
+  return ANSI_GREEN + '[info] ' + msg + ANSI_RESET;
 }
